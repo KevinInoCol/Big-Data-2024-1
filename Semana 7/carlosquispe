@@ -33,9 +33,9 @@ df = spark.createDataFrame([("python", "spark") for _ in range(10)], ["Columna 1
 # Para mostrar la tabla
 df.show()
 
+#Tabla 2
 # Probando la sesión de Spark
-# dataframe = Objeto.funcionHeredada
-df = spark.createDataFrame([("spark", "Explora Python es un lenguaje versatil") for _ in range(10)], ["Columna 1 Big Data", "Columna 2 Big Data"])
+df = spark.createDataFrame([("python", "Explora Python es un Lenguaje versatil") for _ in range(10)], ["Columna 1 Big Data", "Columna 2 Big Data"])
 
-# Para mostrar la tabla
-df.show()
+# Para mostrar la tabla y elimina el limite de espacio
+df.show(truncate=False)
