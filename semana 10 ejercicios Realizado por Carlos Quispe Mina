@@ -55,8 +55,12 @@ pares_con_raiz.collect()
  # Elevar el número de particiones del RDD 'pares_con_raiz' a 20
 pares_con_raiz_20_particiones = pares_con_raiz.repartition(20)
 
+20
+
 # Verificar el número de particiones
 pares_con_raiz_20_particiones.getNumPartitions()
+
+12
 
 D) Si tuviera que disminuir el número de particiones luego de haberlo establecido en 20, ¿qué función utilizaría para hacer más eficiente su código?
 Respuesta: Utilizar la funcion Coalesce
