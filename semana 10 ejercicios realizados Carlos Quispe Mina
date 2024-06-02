@@ -1,0 +1,109 @@
+# Instalamos pyspark y py4j
+!pip install pyspark py4j
+
+from pyspark.sql import SparkSession
+
+Spark = SparkSession.builder.appName("cjqm").getOrCreate()
+SparkContext = Spark.sparkContext
+
+spark = SparkSession.builder.getOrCreate()
+sc = spark.sparkContext
+
+1. Cree un RDD llamado lenguajes que contenga los siguientes lenguajes de programación: Python, R, C, Scala, Rugby y SQL.
+
+rdd_lenguaje = SparkContext.parallelize(['Python', 'R', 'C', 'Scala', 'Rugby', 'Sql'])
+rdd_lenguaje.collect()
+['Python', 'R', 'C', 'Scala', 'Rugby', 'Sql']
+
+C) Cree un nuevo RDD que solo contenga aquellos lenguajes de programación que comiencen con la letra R.
+
+rdd_filtrado_con_r = rdd_lenguaje.filter(lambda x: x.startswith('R'))
+rdd_filtrado_con_r.collect()
+['R', 'Rugby']
+
+2. Cree un RDD llamado pares que contenga los números pares existentes en el intervalo [20;30].
+
+numeros_pares = [x for x in range(20, 31) if x % 2 == 0]
+pares_rdd = sc.parallelize(numeros_pares)
+pares_rdd.collect()
+[20, 22, 24, 26, 28, 30]
+
+b) Obtenga una lista compuesta por los números pares en el intervalo [20;30] y sus respectivas raíces cuadradas.
+
+import math
+
+# Crear una lista que contiene cada número par y su raíz cuadrada
+pares_con_raiz = pares.flatMap(lambda x: [x, math.sqrt(x)])
+
+# mostrar el contenido del nuevo RDD para verificar
+pares_con_raiz.collect()
+[20,
+ 4.47213595499958,
+ 22,
+ 4.69041575982343,
+ 24,
+ 4.898979485566356,
+ 26,
+ 5.0990195135927845,
+ 28,
+ 5.291502622129181,
+ 30,
+ 5.477225575051661]
+
+ C) Eleve el número de particiones del RDD sqrt a 20.
+
+ # Elevar el número de particiones del RDD 'pares_con_raiz' a 20
+pares_con_raiz_20_particiones = pares_con_raiz.repartition(20)
+
+# Verificar el número de particiones
+pares_con_raiz_20_particiones.getNumPartitions()
+
+D) Si tuviera que disminuir el número de particiones luego de haberlo establecido en 20, ¿qué función utilizaría para hacer más eficiente su código?
+Respuesta: Utilizar la funcion Coalesce
+
+# Disminuir el número de particiones del RDD a 10
+pares_con_raiz_10_particiones = pares_con_raiz_20_particiones.coalesce(12)
+
+# Verificar el número de particiones
+pares_con_raiz_10_particiones.getNumPartitions()
+
+3. Cree un RDD del tipo clave valor a partir de la lectura del txt de transacciones.
+txt:
+(1001, 52.3)
+(1005, 20.8)
+(1001, 10.1)
+(1004, 52.7)
+(1005, 20.7)
+(1002, 85.3)
+(1004, 20.9)
+Tenga en cuenta que deberá procesar el RDD leído para obtener el resultado solicitado. Supongamos
+que el RDD resultante de tipo clave valor refleja las transacciones realizadas por número de
+cuentas. Obtenga el monto total por cada cuenta (Suma).
+Tip: Cree su propia función para procesar el RDD leído.
+
+!touch transacciones.txt
+
+!echo "(1001, 52.3)" >> transacciones.txt
+!echo "(1005, 20.8)" >> transacciones.txt
+!echo "(1001, 10.1)" >> transacciones.txt
+!echo "(1004, 52.7)" >> transacciones.txt
+!echo "(1005, 20.7)" >> transacciones.txt
+!echo "(1002, 85.3)" >> transacciones.txt
+!echo "(1004, 20.9)" >> transacciones.txt
+
+archivo_transacciones = "./transacciones.txt"
+transacciones = sc.textFile(archivo_transacciones)
+def procesar_linea(linea):
+    # Eliminar los paréntesis y dividir por la coma
+    cuenta, monto = linea.strip("()").split(", ")
+    # Retornar una tupla (clave, valor)
+    return (int(cuenta), float(monto))
+transacciones_kv = transacciones.map(procesar_linea)
+monto_total_por_cuenta = transacciones_kv.reduceByKey(lambda x, y: x + y)
+resultado = monto_total_por_cuenta.collect()
+for cuenta, total in resultado:
+    print(f"Cuenta: {cuenta}, Monto total: {total:.2f}")
+Cuenta: 1004, Monto total: 73.60
+Cuenta: 1002, Monto total: 85.30
+Cuenta: 1001, Monto total: 62.40
+Cuenta: 1005, Monto total: 41.50
