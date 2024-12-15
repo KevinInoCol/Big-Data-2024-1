@@ -1,0 +1,41 @@
+# Instalar SDK Java 8
+!apt-get install openjdk-8-jdk-headless -qq > /dev/null
+# Descargar Spark 3.4.3
+!wget -q -P . https://archive.apache.org/dist/spark/spark-3.4.3/spark-3.4.3-bin-hadoop3.tgz
+# Descomprimir el archivo descargado de Spark
+!tar xf spark-3.4.3-bin-hadoop3.tgz
+  # Establecemos las variables de entorno
+import os
+
+os.environ["JAVA_HOME"] = "/usr/lib/jvm/java-8-openjdk-amd64"
+os.environ["SPARK_HOME"] = "/content/spark-3.4.3-bin-hadoop3"
+
+# Instalamos la librería findspark para facilitar el uso de Apache Spark en un entorno interactivo como Jupyter notebooks o shells interactivos de Python.
+!pip install -q findspark
+
+  # Instalar pyspark
+!pip install -q pyspark
+
+import findspark
+
+findspark.init()
+
+from pyspark.sql import SparkSession
+
+spark = SparkSession.builder.getOrCreate()
+
+spark
+
+# Probando la sesión de Spark
+# dataframe = Objeto.funcionHeredada
+df = spark.createDataFrame([("python", "spark") for _ in range(10)], ["Columna 1 Big Data", "Columna 2 Big Data"])
+
+# Para mostrar la tabla
+df.show()
+
+#Tabla 2
+# Probando la sesión de Spark
+df = spark.createDataFrame([("python", "Explora Python es un Lenguaje versatil") for _ in range(10)], ["Columna 1 Big Data", "Columna 2 Big Data"])
+
+# Para mostrar la tabla y elimina el limite de espacio
+df.show(truncate=False)
